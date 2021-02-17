@@ -1,0 +1,58 @@
+{
+  "groups": [
+    {
+      "name": "bright-storage.file",
+      "type": "cn.brightstorage.config.UploadFileConfig",
+      "sourceType": "cn.brightstorage.config.UploadFileConfig"
+    },
+    {
+      "name": "bright-storage.security",
+      "type": "cn.brightstorage.config.SecurityConfig",
+      "sourceType": "cn.brightstorage.config.SecurityConfig"
+    }
+  ],
+  "properties": [
+    {
+      "name": "bright-storage.file.options",
+      "type": "java.util.Map<java.lang.String,cn.brightstorage.model.support.UploadFileOption>",
+      "sourceType": "cn.brightstorage.config.UploadFileConfig"
+    },
+    {
+      "name": "bright-storage.file.root",
+      "type": "java.lang.String",
+      "sourceType": "cn.brightstorage.config.UploadFileConfig"
+    },
+    {
+      "name": "bright-storage.file.virtual",
+      "type": "java.lang.String",
+      "sourceType": "cn.brightstorage.config.UploadFileConfig"
+    },
+    {
+      "name": "bright-storage.security.a-e-s-key",
+      "type": "java.lang.String",
+      "description": "AES加密密钥",
+      "sourceType": "cn.brightstorage.config.SecurityConfig"
+    },
+    {
+      "name": "bright-storage.security.secret",
+      "type": "java.lang.String",
+      "description": "jwt签名密钥",
+      "sourceType": "cn.brightstorage.config.SecurityConfig"
+    },
+    {
+      "name": "bright-storage.security.token-expire-time",
+      "type": "java.lang.Integer",
+      "description": "jwt过期时间（小时）",
+      "sourceType": "cn.brightstorage.config.SecurityConfig",
+      "defaultValue": 0
+    },
+    {
+      "name": "bright-storage.security.token-refresh-time",
+      "type": "java.lang.Integer",
+      "description": "jwt有效期小于该时间则续期（小时）",
+      "sourceType": "cn.brightstorage.config.SecurityConfig",
+      "defaultValue": 0
+    }
+  ],
+  "hints": []
+}
