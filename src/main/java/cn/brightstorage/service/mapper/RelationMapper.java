@@ -12,17 +12,20 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @Mapper(componentModel = "spring",
+        uses = UserVOMapper.class,
         nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
 public interface RelationMapper extends BaseMapper<RelationDTO, Relation>{
 
-    @Override
-    @Mapping(source = "members", target = "members", qualifiedByName = "toMembers")
-    RelationDTO toDto(Relation entity);
+//    @Override
+//    @Mapping(source = "members", target = "members", qualifiedByName = "toMembers")
+//    RelationDTO toDto(Relation entity);
+//
+//    @Named("toMembers")
+//    default List<UserVO> toMembers(Set<User> entity){
+//        return entity.stream().map(
+//                user -> new UserVO(user.getId(), user.getNickname(), user.getAvatar()))
+//                .collect(Collectors.toList());
+//    }
 
-    @Named("toMembers")
-    default List<UserVO> toMembers(Set<User> entity){
-        return entity.stream().map(
-                user -> new UserVO(user.getId(), user.getNickname(), user.getAvatar()))
-                .collect(Collectors.toList());
-    }
+
 }

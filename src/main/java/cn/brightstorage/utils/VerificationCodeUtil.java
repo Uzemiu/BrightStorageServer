@@ -18,7 +18,6 @@ import static cn.brightstorage.config.SecurityConfig.CAPTCHA_PREFIX;
 public class VerificationCodeUtil {
 
     private final RedisUtil redisUtil;
-    private final SecurityConfig securityConfig;
 
     public VerificationCode generateImageCaptcha(){
         ArithmeticCaptcha captcha = new ArithmeticCaptcha(111,36,2);

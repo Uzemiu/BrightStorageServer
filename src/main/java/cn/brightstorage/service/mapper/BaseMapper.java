@@ -1,6 +1,7 @@
 package cn.brightstorage.service.mapper;
 
 import java.util.List;
+import java.util.Set;
 
 public interface BaseMapper<D, E> {
 
@@ -11,4 +12,6 @@ public interface BaseMapper<D, E> {
     List<E> toEntity(List<D> dtoList);
 
     List<D> toDto(List<E> entityList);
+
+    List<D> toDto(Set<E> entityList);
 }

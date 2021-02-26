@@ -27,20 +27,11 @@ public class BSTest {
     UserRepository userRepository;
     @Resource
     RelationRepository relationRepository;
-    @Resource
-    AESUtil aesUtil;
-
-    @Test
-    public void aes(){
-        System.out.println(aesUtil.encrypt("123456"));
-    }
-
     @Test
     @Transactional
     @Rollback(value = false)
     public void insertTestUser(){
         String bcp = BCrypt.hashpw("123456");
-
         for(int i = 0;i<9;i++){
             User user = new User();
             user.setPhone("1580000000" + i);

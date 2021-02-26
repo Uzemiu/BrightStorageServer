@@ -1,7 +1,7 @@
 package cn.brightstorage.service.mapper;
 
-import cn.brightstorage.model.dto.UserDTO;
 import cn.brightstorage.model.entity.User;
+import cn.brightstorage.model.vo.UserVO;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -14,10 +14,10 @@ import org.springframework.stereotype.Component;
     comments = "version: 1.4.1.Final, compiler: javac, environment: Java 1.8.0_111 (Oracle Corporation)"
 )
 @Component
-public class UserMapperImpl implements UserMapper {
+public class UserVOMapperImpl implements UserVOMapper {
 
     @Override
-    public User toEntity(UserDTO dto) {
+    public User toEntity(UserVO dto) {
         if ( dto == null ) {
             return null;
         }
@@ -26,51 +26,47 @@ public class UserMapperImpl implements UserMapper {
 
         user.setId( dto.getId() );
         user.setNickname( dto.getNickname() );
-        user.setEmail( dto.getEmail() );
-        user.setPhone( dto.getPhone() );
         user.setAvatar( dto.getAvatar() );
 
         return user;
     }
 
     @Override
-    public UserDTO toDto(User entity) {
+    public UserVO toDto(User entity) {
         if ( entity == null ) {
             return null;
         }
 
-        UserDTO userDTO = new UserDTO();
+        UserVO userVO = new UserVO();
 
-        userDTO.setId( entity.getId() );
-        userDTO.setNickname( entity.getNickname() );
-        userDTO.setEmail( entity.getEmail() );
-        userDTO.setPhone( entity.getPhone() );
-        userDTO.setAvatar( entity.getAvatar() );
+        userVO.setId( entity.getId() );
+        userVO.setNickname( entity.getNickname() );
+        userVO.setAvatar( entity.getAvatar() );
 
-        return userDTO;
+        return userVO;
     }
 
     @Override
-    public List<User> toEntity(List<UserDTO> dtoList) {
+    public List<User> toEntity(List<UserVO> dtoList) {
         if ( dtoList == null ) {
             return null;
         }
 
         List<User> list = new ArrayList<User>( dtoList.size() );
-        for ( UserDTO userDTO : dtoList ) {
-            list.add( toEntity( userDTO ) );
+        for ( UserVO userVO : dtoList ) {
+            list.add( toEntity( userVO ) );
         }
 
         return list;
     }
 
     @Override
-    public List<UserDTO> toDto(List<User> entityList) {
+    public List<UserVO> toDto(List<User> entityList) {
         if ( entityList == null ) {
             return null;
         }
 
-        List<UserDTO> list = new ArrayList<UserDTO>( entityList.size() );
+        List<UserVO> list = new ArrayList<UserVO>( entityList.size() );
         for ( User user : entityList ) {
             list.add( toDto( user ) );
         }
@@ -79,12 +75,12 @@ public class UserMapperImpl implements UserMapper {
     }
 
     @Override
-    public List<UserDTO> toDto(Set<User> entityList) {
+    public List<UserVO> toDto(Set<User> entityList) {
         if ( entityList == null ) {
             return null;
         }
 
-        List<UserDTO> list = new ArrayList<UserDTO>( entityList.size() );
+        List<UserVO> list = new ArrayList<UserVO>( entityList.size() );
         for ( User user : entityList ) {
             list.add( toDto( user ) );
         }

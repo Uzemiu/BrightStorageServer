@@ -23,9 +23,6 @@ import java.security.Security;
 @Component
 public class AESUtil implements InitializingBean {
 
-    @Resource
-    private SecurityConfig securityConfig;
-
     private Cipher encryptor;
     private Cipher decryptor;
 
@@ -33,7 +30,7 @@ public class AESUtil implements InitializingBean {
     public void afterPropertiesSet() throws Exception {
         Security.addProvider(new BouncyCastleProvider());
         try {
-            Key key = new SecretKeySpec(securityConfig.getAESKey().getBytes(StandardCharsets.UTF_8), "AES");
+            Key key = new SecretKeySpec(SecurityConfig.AES_KEY.getBytes(StandardCharsets.UTF_8), "AES");
             encryptor = Cipher.getInstance("AES/ECB/PKCS7Padding");
             encryptor.init(Cipher.ENCRYPT_MODE, key);
             decryptor = Cipher.getInstance("AES/ECB/PKCS7Padding");

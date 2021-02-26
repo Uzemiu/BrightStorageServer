@@ -20,7 +20,7 @@ import java.util.concurrent.ThreadPoolExecutor;
 @Slf4j
 @EnableAsync
 @Configuration
-@EnableJpaAuditing
+//@EnableJpaAuditing
 public class ServerConfig implements WebMvcConfigurer {
 
     @Resource

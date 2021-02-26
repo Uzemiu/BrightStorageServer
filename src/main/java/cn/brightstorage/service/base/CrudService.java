@@ -10,6 +10,8 @@ public interface CrudService<ENTITY, ID> {
 
     List<ENTITY> listAll();
 
+    List<ENTITY> listByIdsIn(Collection<ID> ids);
+
     Optional<ENTITY> getById(ID id);
 
     ENTITY getNotNullById(ID id);

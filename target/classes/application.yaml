@@ -42,8 +42,3 @@ bright-storage:
       image: {path: [img], type: image}
       file: {path: [common], type: file}
 
-  security:
-    secret: j.2_d?+bn
-    AESKey: I8KI6i+3UhXVd02N
-    token-expire-time: 24
-    token-refresh-time: 2

@@ -22,5 +22,7 @@ public class RelationDTO {
     @Length(max = 1023)
     private String avatar;
 
+    private UserVO owner;
+
     private List<UserVO> members;
 }

@@ -27,10 +27,6 @@ public class BaseEntity {
     @Column(name = "update_time")
     private Date updateTime;
 
-    @CreatedBy
-    @Column(name = "create_by")
-    private String createBy;
-
     @PrePersist
     protected void prePersist(){
 

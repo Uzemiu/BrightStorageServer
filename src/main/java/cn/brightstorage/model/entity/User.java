@@ -14,7 +14,7 @@ import java.util.Set;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode(callSuper = true)
+@EqualsAndHashCode(of = "id", callSuper = false)
 @Entity
 public class User extends BaseEntity{
 
@@ -41,10 +41,10 @@ public class User extends BaseEntity{
     @ColumnDefault("''")
     private String avatar;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "user_relation",
-            joinColumns = {@JoinColumn(name = "user_id",referencedColumnName = "user_id")},
-            inverseJoinColumns = {@JoinColumn(name = "relation_id",referencedColumnName = "relation_id")})
+            joinColumns = @JoinColumn(name = "user_id",referencedColumnName = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "relation_id",referencedColumnName = "relation_id"))
     private Set<Relation> relations;
 
     @Override

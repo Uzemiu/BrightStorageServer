@@ -15,10 +15,9 @@ import java.util.Set;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode(callSuper = true)
-@EntityListeners(AuditingEntityListener.class)
+@EqualsAndHashCode(of = "id", callSuper = false)
 @Entity
-public class Relation extends BaseEntity{
+public class Relation extends OwnershipEntity{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -32,7 +31,7 @@ public class Relation extends BaseEntity{
     @ColumnDefault("''")
     private String avatar;
 
-    @ManyToMany(mappedBy = "relations")
+    @ManyToMany(mappedBy = "relations", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
     private Set<User> members;
 
     @Override
@@ -41,5 +40,10 @@ public class Relation extends BaseEntity{
         if(avatar == null){
             avatar = "";
         }
+    }
+
+    @Override
+    protected void preUpdate() {
+        super.preUpdate();
     }
 }

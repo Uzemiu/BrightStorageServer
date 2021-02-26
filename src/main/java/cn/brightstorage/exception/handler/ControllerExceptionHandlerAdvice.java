@@ -1,6 +1,7 @@
 package cn.brightstorage.exception.handler;
 
 import cn.brightstorage.exception.BadRequestException;
+import cn.brightstorage.exception.ForbiddenException;
 import cn.brightstorage.exception.InternalException;
 import cn.brightstorage.exception.ResourceNotFoundException;
 import cn.brightstorage.model.support.BaseResponse;
@@ -39,6 +40,12 @@ public class ControllerExceptionHandlerAdvice {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler({BadRequestException.class,IllegalArgumentException.class})
     public BaseResponse<?> badRequestExceptionHandler(Exception exception){
+        return BaseResponse.error(exception.getMessage());
+    }
+
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    @ExceptionHandler(ForbiddenException.class)
+    public BaseResponse<?> forbiddenExceptionHandler(Exception exception){
         return BaseResponse.error(exception.getMessage());
     }
 

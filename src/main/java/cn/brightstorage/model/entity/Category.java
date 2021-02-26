@@ -6,13 +6,15 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.List;
+import java.util.Set;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode(callSuper = true)
+@EqualsAndHashCode(of = "id", callSuper = false)
 @Entity
-public class Category extends BaseEntity{
+public class Category extends OwnershipEntity{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -21,5 +23,8 @@ public class Category extends BaseEntity{
 
     @Column(name = "name",nullable = false)
     private String name;
+
+    @ManyToMany(mappedBy = "categories", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
+    private Set<StorageUnit> storageUnits;
 
 }

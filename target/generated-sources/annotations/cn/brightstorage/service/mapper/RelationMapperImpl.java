@@ -9,15 +9,19 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import javax.annotation.Generated;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2021-02-10T13:20:52+0800",
+    date = "2021-02-22T13:29:21+0800",
     comments = "version: 1.4.1.Final, compiler: javac, environment: Java 1.8.0_111 (Oracle Corporation)"
 )
 @Component
 public class RelationMapperImpl implements RelationMapper {
+
+    @Autowired
+    private UserVOMapper userVOMapper;
 
     @Override
     public Relation toEntity(RelationDTO dto) {
@@ -27,12 +31,30 @@ public class RelationMapperImpl implements RelationMapper {
 
         Relation relation = new Relation();
 
+        relation.setOwner( userVOMapper.toEntity( dto.getOwner() ) );
         relation.setId( dto.getId() );
         relation.setName( dto.getName() );
         relation.setAvatar( dto.getAvatar() );
         relation.setMembers( userVOListToUserSet( dto.getMembers() ) );
 
         return relation;
+    }
+
+    @Override
+    public RelationDTO toDto(Relation entity) {
+        if ( entity == null ) {
+            return null;
+        }
+
+        RelationDTO relationDTO = new RelationDTO();
+
+        relationDTO.setId( entity.getId() );
+        relationDTO.setName( entity.getName() );
+        relationDTO.setAvatar( entity.getAvatar() );
+        relationDTO.setOwner( userVOMapper.toDto( entity.getOwner() ) );
+        relationDTO.setMembers( userVOMapper.toDto( entity.getMembers() ) );
+
+        return relationDTO;
     }
 
     @Override
@@ -64,33 +86,17 @@ public class RelationMapperImpl implements RelationMapper {
     }
 
     @Override
-    public RelationDTO toDto(Relation entity) {
-        if ( entity == null ) {
+    public List<RelationDTO> toDto(Set<Relation> entityList) {
+        if ( entityList == null ) {
             return null;
         }
 
-        RelationDTO relationDTO = new RelationDTO();
-
-        relationDTO.setMembers( toMembers( entity.getMembers() ) );
-        relationDTO.setId( entity.getId() );
-        relationDTO.setName( entity.getName() );
-        relationDTO.setAvatar( entity.getAvatar() );
-
-        return relationDTO;
-    }
-
-    protected User userVOToUser(UserVO userVO) {
-        if ( userVO == null ) {
-            return null;
+        List<RelationDTO> list = new ArrayList<RelationDTO>( entityList.size() );
+        for ( Relation relation : entityList ) {
+            list.add( toDto( relation ) );
         }
 
-        User user = new User();
-
-        user.setId( userVO.getId() );
-        user.setNickname( userVO.getNickname() );
-        user.setAvatar( userVO.getAvatar() );
-
-        return user;
+        return list;
     }
 
     protected Set<User> userVOListToUserSet(List<UserVO> list) {
@@ -100,7 +106,7 @@ public class RelationMapperImpl implements RelationMapper {
 
         Set<User> set = new HashSet<User>( Math.max( (int) ( list.size() / .75f ) + 1, 16 ) );
         for ( UserVO userVO : list ) {
-            set.add( userVOToUser( userVO ) );
+            set.add( userVOMapper.toEntity( userVO ) );
         }
 
         return set;

@@ -20,6 +20,8 @@ import cn.hutool.crypto.digest.BCrypt;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
+import java.util.regex.Pattern;
+
 @Service("userService")
 public class UserServiceImpl extends AbstractCrudService<User, String> implements UserService {
 
@@ -28,6 +30,7 @@ public class UserServiceImpl extends AbstractCrudService<User, String> implement
     private final TokenUtil tokenUtil;
     private final SMSUtil smsUtil;
     private final UserMapper userMapper;
+    private final Pattern passwordPattern;
 
     protected UserServiceImpl(UserRepository repository,
                               AESUtil aesUtil,
@@ -40,6 +43,8 @@ public class UserServiceImpl extends AbstractCrudService<User, String> implement
         this.tokenUtil = tokenUtil;
         this.smsUtil = smsUtil;
         this.userMapper = userMapper;
+
+        this.passwordPattern = Pattern.compile("^(?![0-9]+$)(?![a-zA-Z]+$)(?![.~!@#$%^&*]+$)[0-9A-Za-z.~!@#$%^&*]{8,31}$");
     }
 
     @Override
@@ -69,6 +74,8 @@ public class UserServiceImpl extends AbstractCrudService<User, String> implement
         Assert.isTrue(BCrypt.checkpw(rawOldPassword, user.getPassword()), "原密码不正确");
 
         String rawNewPassword = aesUtil.decrypt(param.getNewPassword());
+        Assert.isTrue(passwordPattern.matcher(rawNewPassword).matches(),
+                "密码须在8~31位且须由数字、字母、字符(.~!@#$%^&*)中两者以上组成");
         user.setPassword(BCrypt.hashpw(rawNewPassword));
         userRepository.save(user);
     }
@@ -87,6 +94,8 @@ public class UserServiceImpl extends AbstractCrudService<User, String> implement
         smsUtil.verifyCode(registerParam.getPhone(), registerParam.getCode());
 
         String rawPassword = aesUtil.decrypt(registerParam.getPassword());
+        Assert.isTrue(passwordPattern.matcher(rawPassword).matches(),
+                "密码须在8~31位且须由数字、字母、字符(.~!@#$%^&*)中两者以上组成");
 
         User user = new User();
         user.setPhone(registerParam.getPhone());

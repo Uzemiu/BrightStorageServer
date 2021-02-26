@@ -20,13 +20,12 @@ public class TokenUtil{
     public static final String AUTHORIZATION = "Authorization";
 
     private final RedisUtil redisUtil;
-    private final SecurityConfig securityConfig;
 
     public String generateAndSetToken(User user) {
         String key = System.currentTimeMillis() + user.getId();
         String token = UUID.nameUUIDFromBytes(key.getBytes()).toString();
         redisUtil.set(REDIS_TOKEN_PREFIX + token, user.getId(),
-                securityConfig.getTokenExpireTime(), TimeUnit.HOURS);
+                SecurityConfig.TOKEN_EXPIRE_TIME, TimeUnit.HOURS);
         return token;
     }
 
@@ -42,8 +41,8 @@ public class TokenUtil{
     public void checkRenew(String token){
         String redisKey = REDIS_TOKEN_PREFIX + token;
         long expire = redisUtil.getExpire(redisKey);
-        if(expire < securityConfig.getTokenRefreshTime() * 3600_000){
-            redisUtil.expire(redisKey, securityConfig.getTokenExpireTime(), TimeUnit.HOURS);
+        if(expire < SecurityConfig.TOKEN_REFRESH_TIME * 3600_000){
+            redisUtil.expire(redisKey, SecurityConfig.TOKEN_EXPIRE_TIME, TimeUnit.HOURS);
         }
     }
 

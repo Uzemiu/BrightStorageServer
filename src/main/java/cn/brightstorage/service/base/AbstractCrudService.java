@@ -1,7 +1,7 @@
 package cn.brightstorage.service.base;
 
 import cn.brightstorage.exception.BadRequestException;
-import cn.brightstorage.repository.BaseRepository;
+import cn.brightstorage.repository.base.BaseRepository;
 import org.springframework.util.Assert;
 
 import java.lang.reflect.ParameterizedType;
@@ -27,6 +27,12 @@ public abstract class AbstractCrudService<ENTITY, ID> implements CrudService<ENT
     public ENTITY create(ENTITY entity) {
         Assert.notNull(entity, entityName + " must not be null");
         return repository.save(entity);
+    }
+
+    @Override
+    public List<ENTITY> listByIdsIn(Collection<ID> ids) {
+        Assert.notNull(ids, "Ids must not be null");
+        return repository.findAllById(ids);
     }
 
     @Override
