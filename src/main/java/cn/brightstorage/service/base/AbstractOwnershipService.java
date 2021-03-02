@@ -2,17 +2,18 @@ package cn.brightstorage.service.base;
 
 import cn.brightstorage.model.entity.OwnershipEntity;
 import cn.brightstorage.model.entity.User;
-import cn.brightstorage.repository.base.BaseRepository;
 import cn.brightstorage.repository.base.OwnershipRepository;
 import cn.brightstorage.utils.AssertUtil;
 import cn.brightstorage.utils.SecurityUtil;
 import org.springframework.util.Assert;
 
-import java.util.List;
+import java.util.Collection;
 
-public abstract class AbstractOwnershipService<ENTITY extends OwnershipEntity, ID> extends AbstractCrudService<ENTITY, ID>{
+public abstract class AbstractOwnershipService<ENTITY extends OwnershipEntity, ID>
+        extends AbstractCrudService<ENTITY, ID>
+        implements OwnershipService<ENTITY, ID>{
 
-    private OwnershipRepository<ENTITY, ID> ownershipRepository;
+    private final OwnershipRepository<ENTITY, ID> ownershipRepository;
 
     protected AbstractOwnershipService(OwnershipRepository<ENTITY, ID> repository) {
         super(repository);
@@ -24,10 +25,43 @@ public abstract class AbstractOwnershipService<ENTITY extends OwnershipEntity, I
         Assert.notNull(id, "Id must not be nul");
         ENTITY entity = getNotNullById(id);
 
-        AssertUtil.isAuthorized(entity.getOwner().equals(SecurityUtil.getCurrentUser()));
+        checkOwnership(entity);
 
         ownershipRepository.delete(entity);
         return entity;
+    }
+
+    @Override
+    public void checkOwnership(ENTITY entity) {
+        checkOwnership(entity, null);
+    }
+
+    @Override
+    public void checkOwnership(Iterable<ID> ids) {
+        checkOwnership(ids, null);
+    }
+
+    @Override
+    public void checkOwnership(Collection<ENTITY> entities) {
+        checkOwnership(entities, null);
+    }
+
+    @Override
+    public void checkOwnership(ENTITY entity, String message){
+        AssertUtil.isAuthorized(entity.getOwner().equals(SecurityUtil.getCurrentUser()), message);
+    }
+
+    @Override
+    public void checkOwnership(Iterable<ID> ids, String message){
+        checkOwnership(ownershipRepository.findAllById(ids), message);
+    }
+
+    @Override
+    public void checkOwnership(Collection<ENTITY> entities, String message){
+        User currentUser = SecurityUtil.getCurrentUser();
+        boolean hasAccess = entities.stream()
+                .allMatch(category -> category.getOwner().equals(currentUser));
+        AssertUtil.isAuthorized(hasAccess, message);
     }
 
 }

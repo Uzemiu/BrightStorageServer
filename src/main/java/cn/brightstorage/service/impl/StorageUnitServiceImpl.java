@@ -3,13 +3,15 @@ package cn.brightstorage.service.impl;
 import cn.brightstorage.model.dto.StorageUnitDTO;
 import cn.brightstorage.model.entity.StorageUnit;
 import cn.brightstorage.model.entity.User;
+import cn.brightstorage.model.query.StorageUnitQuery;
 import cn.brightstorage.repository.StorageUnitRepository;
 import cn.brightstorage.service.CategoryService;
 import cn.brightstorage.service.StorageUnitService;
 import cn.brightstorage.service.base.AbstractOwnershipService;
 import cn.brightstorage.service.mapper.StorageUnitMapper;
-import cn.brightstorage.utils.AssertUtil;
-import cn.brightstorage.utils.SecurityUtil;
+import cn.brightstorage.utils.PageUtil;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
@@ -37,27 +39,34 @@ public class StorageUnitServiceImpl extends AbstractOwnershipService<StorageUnit
         checkCategoriesOwnership(storageUnitDTO);
 
         StorageUnit storageUnit = storageUnitMapper.toEntity(storageUnitDTO);
+        // 未检查外键
         return storageUnitRepository.save(storageUnit);
     }
 
     @Override
-    public List<StorageUnit> listByParentIdAndOwner(Long parentId, User owner) {
-        return storageUnitRepository.getByParentIdAndOwner(parentId, owner);
+    public Object query(StorageUnitQuery query, Pageable pageable) {
+        Page<StorageUnit> storageUnits = storageUnitRepository.findAll(query.toSpecification(), pageable);
+        Page<StorageUnitDTO> dtos = storageUnits.map(storageUnitMapper::toDto);
+        return PageUtil.toPage(dtos);
     }
 
     @Override
-    public List<StorageUnit> listByParentId(Long parentId) {
-        return storageUnitRepository.getByParentId(parentId);
+    public List<StorageUnitDTO> listByParentIdAndOwner(Long parentId, User owner) {
+        return storageUnitMapper.toDto(storageUnitRepository.getByParentIdAndOwner(parentId, owner));
+    }
+
+    @Override
+    public List<StorageUnitDTO> listByParentId(Long parentId) {
+        return storageUnitMapper.toDto(storageUnitRepository.getByParentId(parentId));
     }
 
     @Override
     public void update(StorageUnitDTO storageUnitDTO) {
-        StorageUnit oldUnit = getNotNullById(storageUnitDTO.getId());
-
-        checkUnitOwnership(oldUnit);
+        checkOwnership(getNotNullById(storageUnitDTO.getId()));
         checkCategoriesOwnership(storageUnitDTO);
 
         StorageUnit newUnit = storageUnitMapper.toEntity(storageUnitDTO);
+        // 未检查外键
         storageUnitRepository.save(newUnit);
     }
 
@@ -72,15 +81,8 @@ public class StorageUnitServiceImpl extends AbstractOwnershipService<StorageUnit
                 ids.add(categoryDTO.getId());
             }
         });
-        User currentUser = SecurityUtil.getCurrentUser();
-        boolean hasAccess = categoryService.listByIdsIn(ids)
-                .stream()
-                .allMatch(category -> category.getOwner().equals(currentUser));
-        AssertUtil.isAuthorized(hasAccess);
+        categoryService.checkOwnership(ids);
     }
 
-    private void checkUnitOwnership(StorageUnit storageUnit){
-        AssertUtil.isAuthorized(storageUnit.getOwner().equals(SecurityUtil.getCurrentUser()));
-    }
 
 }

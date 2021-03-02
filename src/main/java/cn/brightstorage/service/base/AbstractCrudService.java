@@ -1,6 +1,7 @@
 package cn.brightstorage.service.base;
 
 import cn.brightstorage.exception.BadRequestException;
+import cn.brightstorage.exception.ResourceNotFoundException;
 import cn.brightstorage.repository.base.BaseRepository;
 import org.springframework.util.Assert;
 
@@ -19,7 +20,8 @@ public abstract class AbstractCrudService<ENTITY, ID> implements CrudService<ENT
     protected AbstractCrudService(BaseRepository<ENTITY, ID> repository) {
         this.repository = repository;
 
-        Class<ENTITY> actualClass = (Class<ENTITY>) ((ParameterizedType) this.getClass().getGenericSuperclass()).getActualTypeArguments()[0];
+        Class<ENTITY> actualClass = (Class<ENTITY>) ((ParameterizedType) this.getClass()
+                .getGenericSuperclass()).getActualTypeArguments()[0];
         this.entityName =  actualClass.getSimpleName();
     }
 
@@ -49,8 +51,8 @@ public abstract class AbstractCrudService<ENTITY, ID> implements CrudService<ENT
     @Override
     public ENTITY getNotNullById(ID id) {
         Assert.notNull(id, "Id must be null");
-        return repository.findById(id)
-                .orElseThrow(() -> new BadRequestException(entityName + "(id: " + id + ") could not be found"));
+        return repository.findById(id).orElseThrow(() ->
+                new ResourceNotFoundException(entityName + "(id: " + id + ") could not be found"));
     }
 
     @Override

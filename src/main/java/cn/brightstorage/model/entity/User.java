@@ -41,10 +41,7 @@ public class User extends BaseEntity{
     @ColumnDefault("''")
     private String avatar;
 
-    @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(name = "user_relation",
-            joinColumns = @JoinColumn(name = "user_id",referencedColumnName = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "relation_id",referencedColumnName = "relation_id"))
+    @ManyToMany(mappedBy = "members")
     private Set<Relation> relations;
 
     @Override

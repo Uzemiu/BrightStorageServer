@@ -24,5 +24,4 @@ public class RelationDTO {
 
     private UserVO owner;
 
-    private List<UserVO> members;
 }

@@ -32,8 +32,8 @@ public class CategoryController {
         return BaseResponse.ok();
     }
 
-    @DeleteMapping
-    public BaseResponse<?> deleteById(Long id){
+    @DeleteMapping("{id}")
+    public BaseResponse<?> deleteById(@PathVariable Long id){
         categoryService.deleteById(id);
         return BaseResponse.ok();
     }
