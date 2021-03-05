@@ -20,6 +20,7 @@ public abstract class AbstractOwnershipService<ENTITY extends OwnershipEntity, I
         this.ownershipRepository = repository;
     }
 
+
     @Override
     public ENTITY deleteById(ID id) {
         Assert.notNull(id, "Id must not be nul");
@@ -29,6 +30,11 @@ public abstract class AbstractOwnershipService<ENTITY extends OwnershipEntity, I
 
         ownershipRepository.delete(entity);
         return entity;
+    }
+
+    @Override
+    public void checkOwnership(ID id) {
+        checkOwnership(id, null);
     }
 
     @Override
@@ -47,8 +53,17 @@ public abstract class AbstractOwnershipService<ENTITY extends OwnershipEntity, I
     }
 
     @Override
+    public void checkOwnership(ID id, String message) {
+        if(id != null){
+            getById(id).ifPresent(e -> checkOwnership(e, message));
+        }
+    }
+
+    @Override
     public void checkOwnership(ENTITY entity, String message){
-        AssertUtil.isAuthorized(entity.getOwner().equals(SecurityUtil.getCurrentUser()), message);
+        if(entity != null){
+            AssertUtil.isAuthorized(entity.getOwner().equals(SecurityUtil.getCurrentUser()), message);
+        }
     }
 
     @Override

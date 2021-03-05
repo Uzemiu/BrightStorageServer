@@ -59,6 +59,10 @@ public class StorageUnit extends OwnershipEntity{
     @ColumnDefault("''")
     private String note;
 
+    @Column(name = "child_count", updatable = false)
+    @ColumnDefault("0")
+    private Long childCount;
+
     @ManyToMany
     @JoinTable(name = "storage_unit_category",
             joinColumns = {@JoinColumn(name = "storage_unit_id",referencedColumnName = "storage_unit_id")},
@@ -90,6 +94,9 @@ public class StorageUnit extends OwnershipEntity{
             deleted = false;
         }
         if(note == null){
+            note = "";
+        }
+        if(childCount == null){
             note = "";
         }
     }

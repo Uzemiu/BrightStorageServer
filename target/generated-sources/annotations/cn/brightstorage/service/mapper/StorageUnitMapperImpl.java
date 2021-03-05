@@ -14,7 +14,7 @@ import org.springframework.stereotype.Component;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2021-03-02T19:37:31+0800",
+    date = "2021-03-02T23:54:35+0800",
     comments = "version: 1.4.1.Final, compiler: javac, environment: Java 1.8.0_181 (Oracle Corporation)"
 )
 @Component
@@ -44,6 +44,7 @@ public class StorageUnitMapperImpl implements StorageUnitMapper {
         storageUnit.setDeleted( dto.getDeleted() );
         storageUnit.setExpireTime( dto.getExpireTime() );
         storageUnit.setNote( dto.getNote() );
+        storageUnit.setChildCount( dto.getChildCount() );
         storageUnit.setCategories( categoryDTOSetToCategorySet( dto.getCategories() ) );
 
         return storageUnit;
@@ -68,6 +69,7 @@ public class StorageUnitMapperImpl implements StorageUnitMapper {
         storageUnitDTO.setDeleted( entity.getDeleted() );
         storageUnitDTO.setExpireTime( entity.getExpireTime() );
         storageUnitDTO.setNote( entity.getNote() );
+        storageUnitDTO.setChildCount( entity.getChildCount() );
         storageUnitDTO.setCategories( categorySetToCategoryDTOSet( entity.getCategories() ) );
 
         return storageUnitDTO;

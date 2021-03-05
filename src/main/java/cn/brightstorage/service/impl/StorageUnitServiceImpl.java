@@ -10,6 +10,7 @@ import cn.brightstorage.service.StorageUnitService;
 import cn.brightstorage.service.base.AbstractOwnershipService;
 import cn.brightstorage.service.mapper.StorageUnitMapper;
 import cn.brightstorage.utils.PageUtil;
+import cn.brightstorage.utils.SecurityUtil;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -39,8 +40,20 @@ public class StorageUnitServiceImpl extends AbstractOwnershipService<StorageUnit
         checkCategoriesOwnership(storageUnitDTO);
 
         StorageUnit storageUnit = storageUnitMapper.toEntity(storageUnitDTO);
+        storageUnit.setOwner(SecurityUtil.getCurrentUser());
+        storageUnit.setId(null);
         // 未检查外键
         return storageUnitRepository.save(storageUnit);
+    }
+
+    @Override
+    public void update(StorageUnitDTO storageUnitDTO) {
+        checkOwnership(storageUnitDTO.getId()); // 忽略找不到id对应物品情况
+        checkCategoriesOwnership(storageUnitDTO);
+
+        StorageUnit newUnit = storageUnitMapper.toEntity(storageUnitDTO);
+        // 未检查外键
+        storageUnitRepository.save(newUnit);
     }
 
     @Override
@@ -51,23 +64,32 @@ public class StorageUnitServiceImpl extends AbstractOwnershipService<StorageUnit
     }
 
     @Override
+    public List<StorageUnitDTO> merge(List<StorageUnitDTO> storageUnitDTOs) {
+        // if dto.id.isPresent -> check ownership ignore null
+        return null;
+    }
+
+    @Override
     public List<StorageUnitDTO> listByParentIdAndOwner(Long parentId, User owner) {
-        return storageUnitMapper.toDto(storageUnitRepository.getByParentIdAndOwner(parentId, owner));
+        List<StorageUnitDTO> topDTOs = storageUnitMapper.toDto(storageUnitRepository.getByParentIdAndOwner(parentId, owner));
+        fillChildren(topDTOs);
+        return topDTOs;
     }
 
     @Override
     public List<StorageUnitDTO> listByParentId(Long parentId) {
-        return storageUnitMapper.toDto(storageUnitRepository.getByParentId(parentId));
+        List<StorageUnitDTO> topDTOs = storageUnitMapper.toDto(storageUnitRepository.getByParentId(parentId));
+        fillChildren(topDTOs);
+        return topDTOs;
     }
 
-    @Override
-    public void update(StorageUnitDTO storageUnitDTO) {
-        checkOwnership(getNotNullById(storageUnitDTO.getId()));
-        checkCategoriesOwnership(storageUnitDTO);
-
-        StorageUnit newUnit = storageUnitMapper.toEntity(storageUnitDTO);
-        // 未检查外键
-        storageUnitRepository.save(newUnit);
+    private void fillChildren(List<StorageUnitDTO> topDTOs){
+        // 只显示一层子物品
+        topDTOs.forEach(storageUnitDTO -> {
+            List<StorageUnitDTO> children = storageUnitMapper.toDto(
+                    storageUnitRepository.getByParentId(storageUnitDTO.getId()));
+            storageUnitDTO.setChildren(children);
+        });
     }
 
     /**
@@ -83,6 +105,5 @@ public class StorageUnitServiceImpl extends AbstractOwnershipService<StorageUnit
         });
         categoryService.checkOwnership(ids);
     }
-
 
 }

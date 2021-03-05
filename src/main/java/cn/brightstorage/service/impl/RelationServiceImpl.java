@@ -55,11 +55,11 @@ public class RelationServiceImpl extends AbstractOwnershipService<Relation, Long
         checkMembership(relation);
 
         // 检查是否变更关系所有者
-        boolean transferOwnership = !relation.getOwner().getId().equals(relationDTO.getOwner().getId());
-        if(transferOwnership){
-            checkOwnership(relation,"只有所有者能够转让所有者权限");
-            relation.setOwner(userService.getNotNullById(relationDTO.getOwner().getId()));
-        }
+//        boolean transferOwnership = !relation.getOwner().getId().equals(relationDTO.getOwner().getId());
+//        if(transferOwnership){
+//            checkOwnership(relation,"只有所有者能够转让所有者权限");
+//            relation.setOwner(userService.getNotNullById(relationDTO.getOwner().getId()));
+//        }
         relation.setAvatar(relationDTO.getAvatar());
         relation.setName(relationDTO.getName());
 

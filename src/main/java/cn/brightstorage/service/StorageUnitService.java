@@ -10,6 +10,7 @@ import cn.brightstorage.service.base.OwnershipService;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.Collection;
 import java.util.List;
 
 public interface StorageUnitService extends CrudService<StorageUnit, Long>, OwnershipService<StorageUnit, Long> {
@@ -21,6 +22,8 @@ public interface StorageUnitService extends CrudService<StorageUnit, Long>, Owne
     List<StorageUnitDTO> listByParentId(Long parentId);
 
     List<StorageUnitDTO> listByParentIdAndOwner(Long parentId, User owner);
+
+    List<StorageUnitDTO> merge(List<StorageUnitDTO> storageUnitDTOs);
 
     Object query(StorageUnitQuery query, Pageable pageable);
 }

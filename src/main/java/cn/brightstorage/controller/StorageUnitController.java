@@ -22,18 +22,17 @@ import java.util.List;
 public class StorageUnitController {
 
     private final StorageUnitService storageUnitService;
-    private final StorageUnitMapper storageUnitMapper;
 
     @GetMapping
     public BaseResponse<?> listByCurrentUser(){
-        List<StorageUnit> tops = storageUnitService.listByParentIdAndOwner(0L, SecurityUtil.getCurrentUser());
-        List<StorageUnitDTO> topDTOs = storageUnitMapper.toDto(tops);
-        // 只显示一层子物品
-        topDTOs.forEach(storageUnitDTO -> {
-            List<StorageUnit> children = storageUnitService.listByParentId(storageUnitDTO.getId());
-            storageUnitDTO.setChildren(storageUnitMapper.toDto(children));
-        });
+        List<StorageUnitDTO> topDTOs = storageUnitService.listByParentIdAndOwner(0L, SecurityUtil.getCurrentUser());
         return BaseResponse.ok("ok", topDTOs);
+    }
+
+    @GetMapping("/list")
+    public BaseResponse<?> listByIds(@PathVariable Long id){
+
+        return BaseResponse.ok();
     }
 
     @GetMapping("/query")
@@ -56,13 +55,13 @@ public class StorageUnitController {
         return BaseResponse.ok();
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/{id:\\d+}")
     public BaseResponse<?> deleteById(@PathVariable Long id){
         storageUnitService.deleteById(id);
         return BaseResponse.ok();
     }
 
-    public BaseResponse<?> merge(){
+    public BaseResponse<?> merge(@RequestBody List<StorageUnitDTO> storageUnitDTOS){
 
         return BaseResponse.ok();
     }
