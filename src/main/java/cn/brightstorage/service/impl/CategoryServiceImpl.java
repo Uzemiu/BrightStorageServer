@@ -28,13 +28,7 @@ public class CategoryServiceImpl extends AbstractOwnershipService<Category, Long
 
     @Override
     public void update(CategoryDTO categoryDTO) {
-        Category category = getNotNullById(categoryDTO.getId());
-
-        // 是否是所有者
-        AssertUtil.isAuthorized(category.getOwner().equals(SecurityUtil.getCurrentUser()));
-
-        category.setName(categoryDTO.getName());
-        categoryRepository.save(category);
+        categoryRepository.save(categoryMapper.toEntity(categoryDTO));
     }
 
     @Override

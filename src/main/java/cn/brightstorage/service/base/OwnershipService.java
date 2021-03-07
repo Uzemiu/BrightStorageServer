@@ -8,19 +8,19 @@ import java.util.List;
 public interface OwnershipService<ENTITY extends OwnershipEntity, ID> {
 
 //    List<ENTITY> listByCurrentUser();
-    void checkOwnership(ID id);
+    ENTITY checkOwnership(ID id);
 
     void checkOwnership(ENTITY entity);
 
-    void checkOwnership(Iterable<ID> ids);
+    List<ENTITY> checkOwnership(Iterable<ID> ids);
 
     void checkOwnership(Collection<ENTITY> entities);
 
-    void checkOwnership(ID id, String message);
+    ENTITY checkOwnership(ID id, String message);
 
     void checkOwnership(ENTITY entity, String message);
 
-    void checkOwnership(Iterable<ID> ids, String message);
+    List<ENTITY> checkOwnership(Iterable<ID> ids, String message);
 
     void checkOwnership(Collection<ENTITY> entities, String message);
 

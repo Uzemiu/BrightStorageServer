@@ -24,6 +24,10 @@ public class StorageUnit extends OwnershipEntity{
     @Column(name = "storage_unit_id")
     private Long id;
 
+    /**
+     * 0: 物品
+     * 1: 容器
+     */
     @Column(name = "type")
     @ColumnDefault("0")
     private Integer type;
@@ -40,6 +44,10 @@ public class StorageUnit extends OwnershipEntity{
     @ColumnDefault("0")
     private Long parentId;
 
+    /**
+     * true: 向关系成员公开
+     * false: 私有
+     */
     @Column(name = "access")
     @ColumnDefault("0")
     private Boolean access;
@@ -63,7 +71,7 @@ public class StorageUnit extends OwnershipEntity{
     @ColumnDefault("0")
     private Long childCount;
 
-    @ManyToMany
+    @ManyToMany(cascade = CascadeType.PERSIST)
     @JoinTable(name = "storage_unit_category",
             joinColumns = {@JoinColumn(name = "storage_unit_id",referencedColumnName = "storage_unit_id")},
             inverseJoinColumns = {@JoinColumn(name = "category_id",referencedColumnName = "category_id")})
@@ -97,7 +105,7 @@ public class StorageUnit extends OwnershipEntity{
             note = "";
         }
         if(childCount == null){
-            note = "";
+            childCount = 0L;
         }
     }
 }

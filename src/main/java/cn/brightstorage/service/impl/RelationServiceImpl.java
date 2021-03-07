@@ -51,15 +51,6 @@ public class RelationServiceImpl extends AbstractOwnershipService<Relation, Long
     public void update(RelationDTO relationDTO) {
         Relation relation = getNotNullById(relationDTO.getId());
 
-        // 检查更改信息用户是否属于这个关系
-        checkMembership(relation);
-
-        // 检查是否变更关系所有者
-//        boolean transferOwnership = !relation.getOwner().getId().equals(relationDTO.getOwner().getId());
-//        if(transferOwnership){
-//            checkOwnership(relation,"只有所有者能够转让所有者权限");
-//            relation.setOwner(userService.getNotNullById(relationDTO.getOwner().getId()));
-//        }
         relation.setAvatar(relationDTO.getAvatar());
         relation.setName(relationDTO.getName());
 
@@ -82,8 +73,6 @@ public class RelationServiceImpl extends AbstractOwnershipService<Relation, Long
 
     @Override
     public String newInviteCode(Long id, boolean checkCache) {
-        checkMembership(id);
-
         String uuid = (String) redisUtil.get(INVITE_CODE_PREFIX + id);
         if(!checkCache && uuid != null){
             // 已有未过期的邀请码且强制生成新邀请码则删除原缓存

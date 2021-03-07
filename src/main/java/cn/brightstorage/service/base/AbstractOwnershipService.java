@@ -8,6 +8,8 @@ import cn.brightstorage.utils.SecurityUtil;
 import org.springframework.util.Assert;
 
 import java.util.Collection;
+import java.util.List;
+import java.util.Optional;
 
 public abstract class AbstractOwnershipService<ENTITY extends OwnershipEntity, ID>
         extends AbstractCrudService<ENTITY, ID>
@@ -21,20 +23,20 @@ public abstract class AbstractOwnershipService<ENTITY extends OwnershipEntity, I
     }
 
 
+//    @Override
+//    public ENTITY deleteById(ID id) {
+//        Assert.notNull(id, "Id must not be nul");
+//        ENTITY entity = getNotNullById(id);
+//
+//        checkOwnership(entity);
+//
+//        ownershipRepository.delete(entity);
+//        return entity;
+//    }
+
     @Override
-    public ENTITY deleteById(ID id) {
-        Assert.notNull(id, "Id must not be nul");
-        ENTITY entity = getNotNullById(id);
-
-        checkOwnership(entity);
-
-        ownershipRepository.delete(entity);
-        return entity;
-    }
-
-    @Override
-    public void checkOwnership(ID id) {
-        checkOwnership(id, null);
+    public ENTITY checkOwnership(ID id) {
+        return checkOwnership(id, null);
     }
 
     @Override
@@ -43,8 +45,8 @@ public abstract class AbstractOwnershipService<ENTITY extends OwnershipEntity, I
     }
 
     @Override
-    public void checkOwnership(Iterable<ID> ids) {
-        checkOwnership(ids, null);
+    public List<ENTITY> checkOwnership(Iterable<ID> ids) {
+        return checkOwnership(ids, null);
     }
 
     @Override
@@ -53,10 +55,16 @@ public abstract class AbstractOwnershipService<ENTITY extends OwnershipEntity, I
     }
 
     @Override
-    public void checkOwnership(ID id, String message) {
+    public ENTITY checkOwnership(ID id, String message) {
+        ENTITY entity = null;
         if(id != null){
-            getById(id).ifPresent(e -> checkOwnership(e, message));
+            Optional<ENTITY> e = getById(id);
+            if(e.isPresent()){
+                checkOwnership(e.get(), message);
+                entity = e.get();
+            }
         }
+        return entity;
     }
 
     @Override
@@ -67,8 +75,10 @@ public abstract class AbstractOwnershipService<ENTITY extends OwnershipEntity, I
     }
 
     @Override
-    public void checkOwnership(Iterable<ID> ids, String message){
-        checkOwnership(ownershipRepository.findAllById(ids), message);
+    public List<ENTITY> checkOwnership(Iterable<ID> ids, String message){
+        List<ENTITY> entities = ownershipRepository.findAllById(ids);
+        checkOwnership(entities, message);
+        return entities;
     }
 
     @Override

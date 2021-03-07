@@ -54,11 +54,17 @@ public abstract class AbstractCrudService<ENTITY, ID> implements CrudService<ENT
         return repository.findById(id).orElseThrow(() ->
                 new ResourceNotFoundException(entityName + "(id: " + id + ") could not be found"));
     }
-
     @Override
     public ENTITY update(ENTITY entity) {
         Assert.notNull(entity, entityName + " must not be null");
         return repository.save(entity);
+    }
+
+    @Override
+    public void delete(ENTITY entity) {
+        if(entity != null){
+            repository.delete(entity);
+        }
     }
 
     @Override

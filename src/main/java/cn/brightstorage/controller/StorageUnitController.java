@@ -24,15 +24,18 @@ public class StorageUnitController {
     private final StorageUnitService storageUnitService;
 
     @GetMapping
-    public BaseResponse<?> listByCurrentUser(){
+    public BaseResponse<?> listTopsByCurrentUser(){
         List<StorageUnitDTO> topDTOs = storageUnitService.listByParentIdAndOwner(0L, SecurityUtil.getCurrentUser());
         return BaseResponse.ok("ok", topDTOs);
     }
 
-    @GetMapping("/list")
+    @GetMapping("/{id:\\d+}")
     public BaseResponse<?> listByIds(@PathVariable Long id){
+        StorageUnitDTO dto = storageUnitService.findById(id);
 
-        return BaseResponse.ok();
+        storageUnitService.checkOwnership(dto);
+
+        return BaseResponse.ok("ok", dto);
     }
 
     @GetMapping("/query")
@@ -40,29 +43,37 @@ public class StorageUnitController {
                                  @PageableDefault(sort = {"updateTime"},
                                          direction = Sort.Direction.DESC) Pageable pageable){
 
-        return BaseResponse.ok();
+        // TODO checkownership
+        return BaseResponse.ok("ok", storageUnitService.query(query,pageable));
     }
 
     @PostMapping
     public BaseResponse<?> create(@RequestBody @Validated StorageUnitDTO storageUnitDTO){
+        storageUnitService.checkCategoriesOwnership(storageUnitDTO);
+
         storageUnitService.create(storageUnitDTO);
+        return BaseResponse.ok();
+    }
+
+    public BaseResponse<?> sync(@RequestBody List<StorageUnitDTO> storageUnitDTOS){
+
         return BaseResponse.ok();
     }
 
     @PutMapping
     public BaseResponse<?> update(@RequestBody @Validated StorageUnitDTO storageUnitDTO){
+        storageUnitService.checkOwnership(storageUnitDTO.getId());
+        storageUnitService.checkCategoriesOwnership(storageUnitDTO);
+
         storageUnitService.update(storageUnitDTO);
         return BaseResponse.ok();
     }
 
     @DeleteMapping("/{id:\\d+}")
     public BaseResponse<?> deleteById(@PathVariable Long id){
-        storageUnitService.deleteById(id);
-        return BaseResponse.ok();
-    }
+        StorageUnit storageUnit = storageUnitService.checkOwnership(id);
 
-    public BaseResponse<?> merge(@RequestBody List<StorageUnitDTO> storageUnitDTOS){
-
+        storageUnitService.delete(storageUnit);
         return BaseResponse.ok();
     }
 }

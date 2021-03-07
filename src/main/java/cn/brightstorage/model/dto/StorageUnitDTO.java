@@ -44,6 +44,7 @@ public class StorageUnitDTO {
     @Length(max = 1023, message = "注释不能超过1023个字符")
     private String note;
 
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private Long childCount;
 
     private Set<CategoryDTO> categories;

@@ -44,15 +44,20 @@ public class RelationController {
     @GetMapping("/{id:\\d+}")
     public BaseResponse<?> getById(@PathVariable Long id){
         Relation relation = relationService.getNotNullById(id);
+
         relationService.checkMembership(relation);
+
         return BaseResponse.ok("ok", relationMapper.toDto(relation));
     }
 
     @ApiOperation("获取关系成员信息")
     @GetMapping("/members/{id:\\d+}")
     public BaseResponse<?> listMembersByRelationId(@PathVariable Long id){
-        Set<User> members = relationService.getNotNullById(id).getMembers();
-        return BaseResponse.ok("ok", userVOMapper.toDto(members));
+        Relation relation = relationService.getNotNullById(id);
+
+        relationService.checkMembership(relation);
+
+        return BaseResponse.ok("ok", userVOMapper.toDto(relation.getMembers()));
     }
 
     @ApiOperation("创建关系")
@@ -65,6 +70,8 @@ public class RelationController {
     @ApiOperation("更新关系")
     @PutMapping
     public BaseResponse<?> updateRelation(@RequestBody @Validated RelationDTO relationDTO){
+        relationService.checkMembership(relationDTO.getId());
+
         relationService.update(relationDTO);
         return BaseResponse.ok();
     }
@@ -72,13 +79,17 @@ public class RelationController {
     @ApiOperation("解散关系")
     @DeleteMapping("/{id:\\d+}")
     public BaseResponse<?> deleteRelation(@PathVariable Long id){
-        relationService.deleteById(id);
+        Relation relation = relationService.checkOwnership(id);
+
+        relationService.delete(relation);
         return BaseResponse.ok("已成功解散关系");
     }
 
     @ApiOperation("获取关系邀请码")
     @GetMapping("/inviteCode")
     public BaseResponse<?> getInviteCode(@RequestParam Long id){
+        relationService.checkMembership(id);
+
         Map<String, Object> result = new HashMap<>(1);
         result.put("uuid", relationService.newInviteCode(id, true));
         return BaseResponse.ok("ok", result);
@@ -87,6 +98,8 @@ public class RelationController {
     @ApiOperation("更新并获取关系邀请码")
     @GetMapping("/inviteCode/new")
     public BaseResponse<?> getNewInviteCode(@RequestParam Long id){
+        relationService.checkMembership(id);
+
         Map<String, Object> result = new HashMap<>(1);
         result.put("uuid", relationService.newInviteCode(id, false));
         return BaseResponse.ok("ok", result);
@@ -99,8 +112,9 @@ public class RelationController {
         Assert.notNull(relationId, "二维码已过期");
 
         Relation relation = relationService.getNotNullById(Long.parseLong(relationId));
-        relation.getMembers().add(SecurityUtil.getCurrentUser());
-        relationService.update(relation);
+        // send application
+//        relation.getMembers().add(SecurityUtil.getCurrentUser());
+//        relationService.update(relation);
 
         return BaseResponse.ok("加入关系成功");
     }
