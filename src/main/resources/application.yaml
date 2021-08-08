@@ -13,8 +13,8 @@ logging:
 spring:
   datasource:
     url: jdbc:mysql://localhost:3306/bright_storage?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Hongkong
-    username: root
-    password: lcpw_845
+    username: bright_storage
+    password: fbtXWdymS3Nx8FbX
     driver-class-name: com.mysql.cj.jdbc.Driver
     type: com.alibaba.druid.pool.DruidDataSource
     druid:

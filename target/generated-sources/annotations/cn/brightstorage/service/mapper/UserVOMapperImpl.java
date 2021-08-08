@@ -10,8 +10,8 @@ import org.springframework.stereotype.Component;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2021-03-02T23:54:34+0800",
-    comments = "version: 1.4.1.Final, compiler: javac, environment: Java 1.8.0_181 (Oracle Corporation)"
+    date = "2021-08-08T14:26:03+0800",
+    comments = "version: 1.4.1.Final, compiler: javac, environment: Java 1.8.0_241 (Oracle Corporation)"
 )
 @Component
 public class UserVOMapperImpl implements UserVOMapper {
