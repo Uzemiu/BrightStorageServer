@@ -50,8 +50,8 @@ public class ControllerExceptionHandlerAdvice {
     }
 
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    @ExceptionHandler(InternalException.class)
-    public BaseResponse<?> internalExceptionHandler(InternalException exception){
+    @ExceptionHandler({InternalException.class, Exception.class})
+    public BaseResponse<?> internalExceptionHandler(Exception exception){
         return BaseResponse.error(exception.getMessage() + "\n" + Arrays.toString(exception.getStackTrace()));
     }
 

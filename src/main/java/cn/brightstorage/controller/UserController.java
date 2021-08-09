@@ -38,40 +38,40 @@ public class UserController {
     @ApiOperation("注册")
     @AnonymousAccess
     @PostMapping("/register")
-    public BaseResponse<LoginInfoVO> register(@Validated RegisterParam registerParam){
+    public BaseResponse<LoginInfoVO> register(@Validated @RequestBody RegisterParam registerParam){
         return BaseResponse.ok("注册成功", userService.register(registerParam));
     }
 
     @ApiOperation("通过手机登录")
     @AnonymousAccess
     @PostMapping("/login/phone")
-    public BaseResponse<LoginInfoVO> loginPhone(@Validated LoginParam loginParam){
+    public BaseResponse<LoginInfoVO> loginPhone(@Validated @RequestBody LoginParam loginParam){
         return BaseResponse.ok("登陆成功", userService.loginPhone(loginParam));
     }
 
     @ApiOperation("通过密码登录")
     @AnonymousAccess
     @PostMapping("/login/password")
-    public BaseResponse<LoginInfoVO> loginPassword(@Validated LoginParam loginParam){
+    public BaseResponse<LoginInfoVO> loginPassword(@Validated @RequestBody LoginParam loginParam){
         return BaseResponse.ok("登陆成功", userService.loginPassword(loginParam));
     }
 
     @ApiOperation("更新用户信息")
     @PutMapping
-    public BaseResponse<?> update(@Validated UserDTO userDTO){
+    public BaseResponse<?> update(@Validated @RequestBody UserDTO userDTO){
         userService.update(userDTO);
         return BaseResponse.ok();
     }
 
     @ApiOperation("重置密码")
     @PostMapping("/reset/password")
-    public BaseResponse<?> resetPassword(@Validated ResetPasswordParam param){
+    public BaseResponse<?> resetPassword(@Validated @RequestBody ResetPasswordParam param){
         userService.resetPassword(param);
         return BaseResponse.ok("更新密码成功");
     }
 
     @PostMapping("/reset/phone")
-    public BaseResponse<?> resetPhone(@Validated ResetPhoneParam param){
+    public BaseResponse<?> resetPhone(@Validated @RequestBody ResetPhoneParam param){
         return BaseResponse.ok();
     }
 }
