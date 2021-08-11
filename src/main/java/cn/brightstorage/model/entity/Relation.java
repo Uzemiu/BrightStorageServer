@@ -31,8 +31,14 @@ public class Relation extends OwnershipEntity{
     @ColumnDefault("''")
     private String avatar;
 
-    @ManyToMany(mappedBy = "relations", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
+    @ManyToMany
+    @JoinTable(name = "user_relation",
+            joinColumns = @JoinColumn(name = "relation_id",referencedColumnName = "relation_id"),
+            inverseJoinColumns = @JoinColumn(name = "user_id",referencedColumnName = "user_id"))
     private Set<User> members;
+
+    @OneToMany(mappedBy = "sharedRelation")
+    private Set<StorageUnit> sharedStorageUnits;
 
     @Override
     protected void prePersist() {

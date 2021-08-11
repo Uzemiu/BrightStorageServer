@@ -18,6 +18,8 @@ public interface CrudService<ENTITY, ID> {
 
     ENTITY update(ENTITY entity);
 
+    void delete(ENTITY entity);
+
     ENTITY deleteById(ID id);
 
     long deleteByIdIn(Collection<ID> ids);

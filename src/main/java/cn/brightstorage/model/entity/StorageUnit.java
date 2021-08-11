@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.mapping.ToOne;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -24,6 +25,10 @@ public class StorageUnit extends OwnershipEntity{
     @Column(name = "storage_unit_id")
     private Long id;
 
+    /**
+     * 0: 物品
+     * 1: 容器
+     */
     @Column(name = "type")
     @ColumnDefault("0")
     private Integer type;
@@ -40,6 +45,10 @@ public class StorageUnit extends OwnershipEntity{
     @ColumnDefault("0")
     private Long parentId;
 
+    /**
+     * true: 向关系成员公开
+     * false: 私有
+     */
     @Column(name = "access")
     @ColumnDefault("0")
     private Boolean access;
@@ -59,11 +68,19 @@ public class StorageUnit extends OwnershipEntity{
     @ColumnDefault("''")
     private String note;
 
+    @Column(name = "child_count", updatable = false)
+    @ColumnDefault("0")
+    private Long childCount;
+
     @ManyToMany
     @JoinTable(name = "storage_unit_category",
             joinColumns = {@JoinColumn(name = "storage_unit_id",referencedColumnName = "storage_unit_id")},
             inverseJoinColumns = {@JoinColumn(name = "category_id",referencedColumnName = "category_id")})
     private Set<Category> categories;
+
+    @ManyToOne
+    @JoinColumn(name = "shared_relation_id")
+    private Relation sharedRelation;
 
     @Override
     protected void prePersist() {
@@ -91,6 +108,9 @@ public class StorageUnit extends OwnershipEntity{
         }
         if(note == null){
             note = "";
+        }
+        if(childCount == null){
+            childCount = 0L;
         }
     }
 }

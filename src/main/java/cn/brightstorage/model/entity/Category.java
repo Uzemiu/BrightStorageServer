@@ -24,7 +24,7 @@ public class Category extends OwnershipEntity{
     @Column(name = "name",nullable = false)
     private String name;
 
-    @ManyToMany(mappedBy = "categories", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
+    @ManyToMany(mappedBy = "categories", cascade = {CascadeType.PERSIST})
     private Set<StorageUnit> storageUnits;
 
 }

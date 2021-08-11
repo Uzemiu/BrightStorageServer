@@ -59,7 +59,8 @@ public class UserServiceImpl extends AbstractCrudService<User, String> implement
     public LoginInfoVO loginPassword(LoginParam loginParam) {
         User user = userRepository.getUserByPhone(loginParam.getPhone())
                 .orElseThrow(() -> new BadRequestException("用户尚未注册"));
-        String rawPassword = aesUtil.decrypt(loginParam.getPassword());
+//        String rawPassword = aesUtil.decrypt(loginParam.getPassword());
+        String rawPassword = loginParam.getPassword();
 
         Assert.isTrue(BCrypt.checkpw(rawPassword, user.getPassword()), "手机号或密码错误");
 
@@ -70,10 +71,12 @@ public class UserServiceImpl extends AbstractCrudService<User, String> implement
     public void resetPassword(ResetPasswordParam param) {
         User user = SecurityUtil.getCurrentUser();
 
-        String rawOldPassword = aesUtil.decrypt(param.getOldPassword());
+//        String rawOldPassword = aesUtil.decrypt(param.getOldPassword());
+        String rawOldPassword = param.getOldPassword();
         Assert.isTrue(BCrypt.checkpw(rawOldPassword, user.getPassword()), "原密码不正确");
 
-        String rawNewPassword = aesUtil.decrypt(param.getNewPassword());
+//        String rawNewPassword = aesUtil.decrypt(param.getNewPassword());
+        String rawNewPassword = param.getNewPassword();
         Assert.isTrue(passwordPattern.matcher(rawNewPassword).matches(),
                 "密码须在8~31位且须由数字、字母、字符(.~!@#$%^&*)中两者以上组成");
         user.setPassword(BCrypt.hashpw(rawNewPassword));
@@ -93,7 +96,8 @@ public class UserServiceImpl extends AbstractCrudService<User, String> implement
     public LoginInfoVO register(RegisterParam registerParam) {
         smsUtil.verifyCode(registerParam.getPhone(), registerParam.getCode());
 
-        String rawPassword = aesUtil.decrypt(registerParam.getPassword());
+//        String rawPassword = aesUtil.decrypt(registerParam.getPassword());
+        String rawPassword = registerParam.getPassword();
         Assert.isTrue(passwordPattern.matcher(rawPassword).matches(),
                 "密码须在8~31位且须由数字、字母、字符(.~!@#$%^&*)中两者以上组成");
 

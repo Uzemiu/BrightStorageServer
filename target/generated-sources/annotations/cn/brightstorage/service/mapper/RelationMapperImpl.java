@@ -2,10 +2,7 @@ package cn.brightstorage.service.mapper;
 
 import cn.brightstorage.model.dto.RelationDTO;
 import cn.brightstorage.model.entity.Relation;
-import cn.brightstorage.model.entity.User;
-import cn.brightstorage.model.vo.UserVO;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import javax.annotation.Generated;
@@ -14,7 +11,7 @@ import org.springframework.stereotype.Component;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2021-08-07T21:17:42+0800",
+    date = "2021-08-11T18:27:14+0800",
     comments = "version: 1.4.1.Final, compiler: javac, environment: Java 1.8.0_111 (Oracle Corporation)"
 )
 @Component
@@ -35,7 +32,6 @@ public class RelationMapperImpl implements RelationMapper {
         relation.setId( dto.getId() );
         relation.setName( dto.getName() );
         relation.setAvatar( dto.getAvatar() );
-        relation.setMembers( userVOListToUserSet( dto.getMembers() ) );
 
         return relation;
     }
@@ -52,7 +48,6 @@ public class RelationMapperImpl implements RelationMapper {
         relationDTO.setName( entity.getName() );
         relationDTO.setAvatar( entity.getAvatar() );
         relationDTO.setOwner( userVOMapper.toDto( entity.getOwner() ) );
-        relationDTO.setMembers( userVOMapper.toDto( entity.getMembers() ) );
 
         return relationDTO;
     }
@@ -97,18 +92,5 @@ public class RelationMapperImpl implements RelationMapper {
         }
 
         return list;
-    }
-
-    protected Set<User> userVOListToUserSet(List<UserVO> list) {
-        if ( list == null ) {
-            return null;
-        }
-
-        Set<User> set = new HashSet<User>( Math.max( (int) ( list.size() / .75f ) + 1, 16 ) );
-        for ( UserVO userVO : list ) {
-            set.add( userVOMapper.toEntity( userVO ) );
-        }
-
-        return set;
     }
 }
