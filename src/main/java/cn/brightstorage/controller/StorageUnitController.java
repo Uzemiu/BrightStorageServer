@@ -15,6 +15,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
@@ -47,16 +48,29 @@ public class StorageUnitController {
         return BaseResponse.ok("ok", storageUnitService.query(query,pageable));
     }
 
+    /**
+     * 获取关系共享物品
+     * @param id 关系ID
+     * @return /
+     */
+    @GetMapping("/sharedRelation/{id:\\d+}")
+    public BaseResponse<List<StorageUnitDTO>> listByRelationId(@PathVariable Long id){
+        return BaseResponse.ok("ok", storageUnitService.listByRelationId(id));
+    }
+
+    @PostMapping("/share")
+    public BaseResponse<?> shareStorageUnit(@RequestBody Map<String, Long> param){
+        Long relationId = param.get("relationId");
+        Long storageId = param.get("storageId");
+        storageUnitService.shareStorageUnit(relationId, storageId);
+        return BaseResponse.ok();
+    }
+
     @PostMapping
     public BaseResponse<?> create(@RequestBody @Validated StorageUnitDTO storageUnitDTO){
         storageUnitService.checkCategoriesOwnership(storageUnitDTO);
 
         storageUnitService.create(storageUnitDTO);
-        return BaseResponse.ok();
-    }
-
-    public BaseResponse<?> sync(@RequestBody List<StorageUnitDTO> storageUnitDTOS){
-
         return BaseResponse.ok();
     }
 
@@ -76,4 +90,5 @@ public class StorageUnitController {
         storageUnitService.delete(storageUnit);
         return BaseResponse.ok();
     }
+
 }

@@ -6,6 +6,7 @@ import cn.brightstorage.model.entity.User;
 import cn.brightstorage.model.param.RemoveMemberParam;
 import cn.brightstorage.model.support.BaseResponse;
 import cn.brightstorage.model.support.VerificationCode;
+import cn.brightstorage.model.vo.UserVO;
 import cn.brightstorage.service.RelationService;
 import cn.brightstorage.service.mapper.RelationMapper;
 import cn.brightstorage.service.mapper.UserVOMapper;
@@ -51,8 +52,8 @@ public class RelationController {
     }
 
     @ApiOperation("获取关系成员信息")
-    @GetMapping("/members/{id:\\d+}")
-    public BaseResponse<?> listMembersByRelationId(@PathVariable Long id){
+    @GetMapping("/members")
+    public BaseResponse<List<UserVO>> listMembersByRelationId(@RequestParam Long id){
         Relation relation = relationService.getNotNullById(id);
 
         relationService.checkMembership(relation);
@@ -63,8 +64,7 @@ public class RelationController {
     @ApiOperation("创建关系")
     @PostMapping
     public BaseResponse<?> createRelation(@RequestBody @Validated RelationDTO relationDTO){
-        relationService.create(relationDTO);
-        return BaseResponse.ok();
+        return BaseResponse.ok("ok", relationMapper.toDto(relationService.create(relationDTO)));
     }
 
     @ApiOperation("更新关系")
@@ -77,8 +77,8 @@ public class RelationController {
     }
 
     @ApiOperation("解散关系")
-    @DeleteMapping("/{id:\\d+}")
-    public BaseResponse<?> deleteRelation(@PathVariable Long id){
+    @DeleteMapping
+    public BaseResponse<?> deleteRelation(@RequestBody Long id){
         Relation relation = relationService.checkOwnership(id);
 
         relationService.delete(relation);
@@ -89,20 +89,14 @@ public class RelationController {
     @GetMapping("/inviteCode")
     public BaseResponse<?> getInviteCode(@RequestParam Long id){
         relationService.checkMembership(id);
-
-        Map<String, Object> result = new HashMap<>(1);
-        result.put("uuid", relationService.newInviteCode(id, true));
-        return BaseResponse.ok("ok", result);
+        return BaseResponse.ok("ok", relationService.newInviteCode(id, true));
     }
 
     @ApiOperation("更新并获取关系邀请码")
     @GetMapping("/inviteCode/new")
     public BaseResponse<?> getNewInviteCode(@RequestParam Long id){
         relationService.checkMembership(id);
-
-        Map<String, Object> result = new HashMap<>(1);
-        result.put("uuid", relationService.newInviteCode(id, false));
-        return BaseResponse.ok("ok", result);
+        return BaseResponse.ok("ok", relationService.newInviteCode(id, false));
     }
 
     @ApiOperation("通过邀请码加入关系")
@@ -112,9 +106,9 @@ public class RelationController {
         Assert.notNull(relationId, "二维码已过期");
 
         Relation relation = relationService.getNotNullById(Long.parseLong(relationId));
-        // send application
-//        relation.getMembers().add(SecurityUtil.getCurrentUser());
-//        relationService.update(relation);
+        // 或许可以发送加入申请
+        relation.getMembers().add(SecurityUtil.getCurrentUser());
+        relationService.update(relation);
 
         return BaseResponse.ok("加入关系成功");
     }

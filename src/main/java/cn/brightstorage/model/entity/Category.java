@@ -24,7 +24,8 @@ public class Category extends OwnershipEntity{
     @Column(name = "name",nullable = false)
     private String name;
 
-    @ManyToMany(mappedBy = "categories", cascade = {CascadeType.PERSIST})
+    @ManyToMany(mappedBy = "categories")
+    @org.hibernate.annotations.ForeignKey(name = "none")
     private Set<StorageUnit> storageUnits;
 
 }

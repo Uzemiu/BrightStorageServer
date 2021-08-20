@@ -1,5 +1,6 @@
 package cn.brightstorage.repository;
 
+import cn.brightstorage.model.entity.Relation;
 import cn.brightstorage.model.entity.StorageUnit;
 import cn.brightstorage.model.entity.User;
 import cn.brightstorage.repository.base.OwnershipRepository;
@@ -20,13 +21,6 @@ public interface StorageUnitRepository
 
     List<StorageUnit> getByParentIdAndOwner(Long parentId, User owner);
 
-    @Modifying
-    @Transactional
-    @Query("update StorageUnit u set u.childCount = :count where u.id = :id")
-    void setChildCount(@Param("id") Long id, @Param("count") Long count);
+    List<StorageUnit> getBySharedRelation(Relation sharedRelation);
 
-    @Modifying
-    @Transactional
-    @Query("update StorageUnit u set u.childCount = u.childCount + :count where u.id = :id")
-    void increaseChildCount(@Param("id") Long id, @Param("count") Long count);
 }

@@ -1,6 +1,7 @@
 package cn.brightstorage.model.entity;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -17,6 +18,7 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(of = "id", callSuper = false)
+@JsonIgnoreProperties(ignoreUnknown = true)
 @Entity
 public class StorageUnit extends OwnershipEntity{
 
@@ -45,6 +47,9 @@ public class StorageUnit extends OwnershipEntity{
     @ColumnDefault("0")
     private Long parentId;
 
+    @Transient
+    private Long localParentId;
+
     /**
      * true: 向关系成员公开
      * false: 私有
@@ -68,18 +73,20 @@ public class StorageUnit extends OwnershipEntity{
     @ColumnDefault("''")
     private String note;
 
-    @Column(name = "child_count", updatable = false)
-    @ColumnDefault("0")
-    private Long childCount;
+    @Column(name = "last_access_time")
+    private Date lastAccessTime;
 
     @ManyToMany
     @JoinTable(name = "storage_unit_category",
             joinColumns = {@JoinColumn(name = "storage_unit_id",referencedColumnName = "storage_unit_id")},
-            inverseJoinColumns = {@JoinColumn(name = "category_id",referencedColumnName = "category_id")})
+            foreignKey = @ForeignKey(value = ConstraintMode.NO_CONSTRAINT, name = "none"),
+            inverseJoinColumns = {@JoinColumn(name = "category_id",referencedColumnName = "category_id")},
+            inverseForeignKey = @ForeignKey(value = ConstraintMode.NO_CONSTRAINT, name = "none"))
     private Set<Category> categories;
 
     @ManyToOne
-    @JoinColumn(name = "shared_relation_id")
+    @JoinColumn(name = "shared_relation_id",
+            foreignKey = @ForeignKey(value = ConstraintMode.NO_CONSTRAINT, name = "none"))
     private Relation sharedRelation;
 
     @Override
@@ -109,8 +116,14 @@ public class StorageUnit extends OwnershipEntity{
         if(note == null){
             note = "";
         }
-        if(childCount == null){
-            childCount = 0L;
+        if(lastAccessTime == null){
+            lastAccessTime = new Date();
         }
+    }
+
+    @Override
+    protected void preUpdate() {
+        super.preUpdate();
+        lastAccessTime = new Date();
     }
 }

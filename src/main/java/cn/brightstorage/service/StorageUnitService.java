@@ -28,8 +28,6 @@ public interface StorageUnitService extends CrudService<StorageUnit, Long>, Owne
 
     List<StorageUnitDTO> listByParentIdAndOwner(Long parentId, User owner);
 
-    List<StorageUnitDTO> sync(List<StorageUnitDTO> storageUnitDTOs);
-
     PageDTO<StorageUnitDTO> query(StorageUnitQuery query, Pageable pageable);
 
     /**
@@ -39,4 +37,18 @@ public interface StorageUnitService extends CrudService<StorageUnit, Long>, Owne
     void checkCategoriesOwnership(StorageUnitDTO storageUnit);
 
     void checkOwnership(StorageUnitDTO storageUnit);
+
+    /**
+     * 列出关系下的所有物品
+     * @param id 关系ID
+     * @return /
+     */
+    List<StorageUnitDTO> listByRelationId(Long id);
+
+    /**
+     * 对关系共享物品
+     * @param relationId
+     * @param storageUnitId
+     */
+    void shareStorageUnit(Long relationId, Long storageUnitId);
 }
